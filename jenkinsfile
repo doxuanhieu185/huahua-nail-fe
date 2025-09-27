@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        label 'dev-server'
+    }
+    
+    environment {
+        appUser = "jenkins"
+        projectDir = "${WORKSPACE}"
+        composeFile = "docker-compose.yml"
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm 
+            }
+        }
+        stage('Deploy with Docker Compose') {
+            steps {
+                sh """
+                    cd ${projectDir}
+                    docker-compose down
+                    docker-compose up -d --build
+                """
+            }
+        }
+    }
+    post {
+        success {
+            echo "Deployment successfully completed!"
+        }
+        failure {
+            echo "Deployment failed!"
+        }
+    }
+}
