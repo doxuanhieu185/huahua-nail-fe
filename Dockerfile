@@ -1,11 +1,13 @@
-# Multi-stage build for React frontend
+# Multi-stage build for React frontend - Simple version
 FROM node:20-alpine AS build
 
 WORKDIR /app
 
 # Copy package files first for better caching
 COPY package*.json ./
-RUN npm ci --only=production
+
+# Use npm install instead of npm ci (works without package-lock.json)
+RUN npm install
 
 # Copy source code and build
 COPY . .
